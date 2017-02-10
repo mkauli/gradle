@@ -17,6 +17,7 @@
 package org.gradle.api.tasks.javadoc
 
 import org.gradle.api.internal.file.collections.SimpleFileCollection
+import org.gradle.internal.operations.BuildOperationWorkerRegistry
 import org.gradle.jvm.internal.toolchain.JavaToolChainInternal
 import org.gradle.language.base.internal.compile.Compiler
 import org.gradle.platform.base.internal.toolchain.ToolProvider
@@ -46,6 +47,7 @@ class JavadocTest extends Specification {
         task.setExecutable(executable);
         task.setToolChain(toolChain);
         GFileUtils.touch(new File(srcDir, "file.java"));
+        task.services.get(BuildOperationWorkerRegistry.class).operationStart()
     }
 
     def defaultExecution() {
