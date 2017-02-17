@@ -16,6 +16,7 @@
 
 package org.gradle.performance.fixture;
 
+import org.apache.commons.lang.StringUtils;
 import org.gradle.api.Action;
 import org.gradle.internal.concurrent.CompositeStoppable;
 import org.gradle.performance.measure.MeasuredOperation;
@@ -73,6 +74,7 @@ public class BuildExperimentRunner {
 
             GradleInvocationSpec buildSpec = invocation.withAdditionalJvmOpts(additionalJvmOpts).withAdditionalArgs(additionalArgs);
             copyTemplateTo(experiment, workingDirectory);
+            configureCompilerDaemonAndTestWorkerMemory(experiment, workingDirectory);
             GradleSession session = executerProvider.session(buildSpec);
 
             session.prepare();
@@ -82,6 +84,18 @@ public class BuildExperimentRunner {
                 session.cleanup();
                 CompositeStoppable.stoppable(dataCollector).stop();
             }
+        }
+    }
+
+    private void configureCompilerDaemonAndTestWorkerMemory(BuildExperimentSpec experiment, File workingDirectory) {
+        File buildFile = new File(workingDirectory, "build.gradle");
+        List<String> compilerDaemonJvmOpts = experiment.getCompilerDaemonJvmOpts();
+        List<String> testWorkerJvmOpts = experiment.getTestWorkerJvmOpts();
+        if (compilerDaemonJvmOpts != null && !compilerDaemonJvmOpts.isEmpty()) {
+            GFileUtils.writeStringToFile(buildFile, "\ncompileJava { options.forkOptions.jvmArgs = [\"" + StringUtils.join(compilerDaemonJvmOpts, "\", \"") + "\"] }\n", true);
+        }
+        if (testWorkerJvmOpts != null && !testWorkerJvmOpts.isEmpty()) {
+            GFileUtils.writeStringToFile(buildFile, "\ntest { jvmArgs \"" + StringUtils.join(testWorkerJvmOpts, "\", \"") + "\" }\n", true);
         }
     }
 

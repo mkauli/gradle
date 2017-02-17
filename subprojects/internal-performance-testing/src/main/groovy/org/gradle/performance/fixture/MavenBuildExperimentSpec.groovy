@@ -18,6 +18,7 @@ package org.gradle.performance.fixture
 
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
+import org.gradle.api.Nullable
 import org.gradle.performance.results.BuildDisplayInfo
 
 @CompileStatic
@@ -26,8 +27,9 @@ class MavenBuildExperimentSpec extends BuildExperimentSpec {
 
     final MavenInvocationSpec invocation
 
-    MavenBuildExperimentSpec(String displayName, String projectName, File workingDirectory, MavenInvocationSpec mavenInvocation, Integer warmUpCount, Integer invocationCount, BuildExperimentListener listener, InvocationCustomizer invocationCustomizer) {
-        super(displayName, projectName, workingDirectory, warmUpCount, invocationCount, listener, invocationCustomizer)
+    MavenBuildExperimentSpec(String displayName, String projectName, File workingDirectory, List<String> compilerDaemonJvmOpts, List<String> testWorkerJvmOpts,
+                             MavenInvocationSpec mavenInvocation, Integer warmUpCount, Integer invocationCount, BuildExperimentListener listener, InvocationCustomizer invocationCustomizer) {
+        super(displayName, projectName, workingDirectory, compilerDaemonJvmOpts, testWorkerJvmOpts, warmUpCount, invocationCount, listener, invocationCustomizer)
         this.invocation = mavenInvocation
     }
 
@@ -44,6 +46,8 @@ class MavenBuildExperimentSpec extends BuildExperimentSpec {
         String displayName
         String projectName
         File workingDirectory
+        List<String> compilerDaemonJvmOpts
+        List<String> testWorkerJvmOpts
         MavenInvocationSpec.InvocationBuilder invocation = MavenInvocationSpec.builder()
 
         Integer warmUpCount
@@ -90,7 +94,7 @@ class MavenBuildExperimentSpec extends BuildExperimentSpec {
             assert displayName != null
             assert invocation != null
 
-            new MavenBuildExperimentSpec(displayName, projectName, workingDirectory, invocation.build(), warmUpCount, invocationCount, listener, invocationCustomizer)
+            new MavenBuildExperimentSpec(displayName, projectName, workingDirectory, compilerDaemonJvmOpts, testWorkerJvmOpts, invocation.build(), warmUpCount, invocationCount, listener, invocationCustomizer)
         }
 
     }

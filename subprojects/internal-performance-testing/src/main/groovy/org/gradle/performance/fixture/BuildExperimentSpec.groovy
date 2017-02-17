@@ -28,6 +28,12 @@ abstract class BuildExperimentSpec {
     String displayName
     String projectName
     File workingDirectory
+
+    @Nullable
+    List<String> compilerDaemonJvmOpts
+    @Nullable
+    List<String> testWorkerJvmOpts
+
     @Nullable
     Integer warmUpCount
     @Nullable
@@ -35,10 +41,13 @@ abstract class BuildExperimentSpec {
     BuildExperimentListener listener
     InvocationCustomizer invocationCustomizer
 
-    BuildExperimentSpec(String displayName, String projectName, File workingDirectory, Integer warmUpCount, Integer invocationCount, BuildExperimentListener listener, InvocationCustomizer invocationCustomizer) {
+    BuildExperimentSpec(String displayName, String projectName, File workingDirectory, List<String> compilerDaemonJvmOpts, List<String> testWorkerJvmOpts,
+                        Integer warmUpCount, Integer invocationCount, BuildExperimentListener listener, InvocationCustomizer invocationCustomizer) {
         this.displayName = displayName
         this.projectName = projectName
         this.workingDirectory = workingDirectory
+        this.compilerDaemonJvmOpts = compilerDaemonJvmOpts
+        this.testWorkerJvmOpts = testWorkerJvmOpts
         this.warmUpCount = warmUpCount
         this.invocationCount = invocationCount
         this.listener = listener

@@ -55,6 +55,8 @@ class CrossVersionPerformanceTestRunner extends PerformanceTestSpec {
     List<String> tasksToRun = []
     List<String> args = []
     List<String> gradleOpts = []
+    List<String> compilerDaemonJvmOpts = []
+    List<String> testWorkerJvmOpts = []
     List<String> previousTestIds = []
 
     List<String> targetVersions = []
@@ -235,7 +237,10 @@ class CrossVersionPerformanceTestRunner extends PerformanceTestSpec {
                 gradleOpts(gradleOptsInUse as String[])
                 useDaemon(this.useDaemon)
             }
-        builder.workingDirectory = workingDir
+            .workingDirectory(this.workingDir)
+            .compilerDaemonJvmOpts(this.compilerDaemonJvmOpts)
+            .testWorkerJvmOpts(this.testWorkerJvmOpts)
+
         def spec = builder.build()
         if (experimentRunner.honestProfiler) {
             experimentRunner.honestProfiler.sessionId = "${testId}-${dist.version.version}".replaceAll('[^a-zA-Z0-9.-]', '_').replaceAll('[_]+', '_')

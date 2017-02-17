@@ -33,7 +33,7 @@ import org.gradle.tooling.BuildActionExecuter
 public abstract class AbstractAndroidStudioMockupCrossVersionPerformanceTest extends AbstractToolingApiCrossVersionPerformanceTest {
 
     void experiment(String projectName, String displayName, @DelegatesTo(ToolingApiExperimentSpec) Closure<?> spec) {
-        experimentSpec = new AndroidStudioExperimentSpec(displayName, projectName, temporaryFolder.testDirectory, 3, 10, null, null)
+        experimentSpec = new AndroidStudioExperimentSpec(displayName, projectName, temporaryFolder.testDirectory, null, null, 3, 10, null, null)
         performanceTestIdProvider.testSpec = experimentSpec
         ((AndroidStudioExperimentSpec) experimentSpec).test = this
         def clone = spec.rehydrate(experimentSpec, this, this)

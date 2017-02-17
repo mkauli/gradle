@@ -21,8 +21,9 @@ import org.gradle.performance.results.BuildDisplayInfo
 class GradleBuildExperimentSpec extends BuildExperimentSpec {
     final GradleInvocationSpec invocation
 
-    GradleBuildExperimentSpec(String displayName, String projectName, File workingDirectory, GradleInvocationSpec invocation, Integer warmUpCount, Integer invocationCount, BuildExperimentListener listener, InvocationCustomizer invocationCustomizer) {
-        super(displayName, projectName, workingDirectory, warmUpCount, invocationCount, listener, invocationCustomizer)
+    GradleBuildExperimentSpec(String displayName, String projectName, File workingDirectory, List<String> compilerDaemonJvmOpts, List<String> testWorkerJvmOpts,
+                              GradleInvocationSpec invocation, Integer warmUpCount, Integer invocationCount, BuildExperimentListener listener, InvocationCustomizer invocationCustomizer) {
+        super(displayName, projectName, workingDirectory, compilerDaemonJvmOpts, testWorkerJvmOpts, warmUpCount, invocationCount, listener, invocationCustomizer)
         this.invocation = invocation
     }
 
@@ -39,6 +40,8 @@ class GradleBuildExperimentSpec extends BuildExperimentSpec {
         String displayName
         String projectName
         File workingDirectory
+        List<String> compilerDaemonJvmOpts
+        List<String> testWorkerJvmOpts
         GradleInvocationSpec.InvocationBuilder invocation = GradleInvocationSpec.builder()
         Integer warmUpCount
         Integer invocationCount
@@ -52,6 +55,21 @@ class GradleBuildExperimentSpec extends BuildExperimentSpec {
 
         GradleBuilder projectName(String projectName) {
             this.projectName = projectName
+            this
+        }
+
+        GradleBuilder workingDirectory(File workingDirectory) {
+            this.workingDirectory = workingDirectory
+            this
+        }
+
+        GradleBuilder compilerDaemonJvmOpts(List<String> compilerDaemonJvmOpts) {
+            this.compilerDaemonJvmOpts = compilerDaemonJvmOpts
+            this
+        }
+
+        GradleBuilder testWorkerJvmOpts(List<String> testWorkerJvmOpts) {
+            this.testWorkerJvmOpts = testWorkerJvmOpts
             this
         }
 
@@ -85,7 +103,7 @@ class GradleBuildExperimentSpec extends BuildExperimentSpec {
             assert displayName != null
             assert invocation != null
 
-            new GradleBuildExperimentSpec(displayName, projectName, workingDirectory, invocation.buildInfo(displayName, projectName).build(), warmUpCount, invocationCount, listener, invocationCustomizer)
+            new GradleBuildExperimentSpec(displayName, projectName, workingDirectory, compilerDaemonJvmOpts, testWorkerJvmOpts, invocation.buildInfo(displayName, projectName).build(), warmUpCount, invocationCount, listener, invocationCustomizer)
         }
     }
 }
