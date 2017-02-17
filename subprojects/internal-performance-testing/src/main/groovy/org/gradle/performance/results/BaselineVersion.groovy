@@ -26,7 +26,7 @@ import static PrettyCalculator.toMillis
 class BaselineVersion implements VersionResults {
     // Multiply standard error of mean by this factor to reduce the number of a falsely identified regressions.
     // https://en.wikipedia.org/wiki/Standard_deviation#Rules_for_normally_distributed_data
-    static final BigDecimal NUM_STANDARD_ERRORS_FROM_MEAN = new BigDecimal("6.25")
+    static final BigDecimal NUM_STANDARD_ERRORS_FROM_MEAN = new BigDecimal("5")
     final String version
     final MeasuredOperationList results = new MeasuredOperationList()
 
@@ -59,7 +59,18 @@ class BaselineVersion implements VersionResults {
     }
 
     boolean fasterThan(MeasuredOperationList current) {
-        results.totalTime && current.totalTime.median - results.totalTime.median > getMaxExecutionTimeRegression(current)
+        if (!results.totalTime) {
+            return false
+        }
+        def limit = getMaxExecutionTimeRegression(current)
+        if (limit.value > results.totalTime.median.value * 0.1) {
+            throw new IllegalStateException("""
+                Regression limit ($limit) exceeded 10% of the median ($results.totalTime.median), making the test results inconclusive.
+                This usually happens when a test either does not have enough warmups/iterations or when
+                the build under test is memory starved.
+            """)
+        }
+        current.totalTime.median - results.totalTime.median > limit
     }
 
     Amount<Duration> getMaxExecutionTimeRegression(MeasuredOperationList current) {
